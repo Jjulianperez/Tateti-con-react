@@ -1,55 +1,79 @@
 import { useState } from 'react'
 import './App.css'
 
-const TURNS = {
-  X: 'x',
-  O: 'o'
-}
+import { Square } from './components/Square'
+import { TURNS } from './constatns';
+import { checkWinnerFrom, checkEndGame } from './logic/board';
+import { WinnerModal } from './components/WinnerModal';
 
-const Square =({children, isSelected, updateBoard, index}) =>{
-  const className = `square ${isSelected ? 'is-selected' : ''}`
 
-  const cuandoHagaclick = () =>{
-    updateBoard(index)
-  }
- 
-  return(
-    <div onClick={cuandoHagaclick} className={className}>
-      {children}
-    </div>
-  )
-} 
+
 function App() {
+  // Estados "useState"
+  // Este estado es el tablero y para actualizarlo
   const tablero = Array(9).fill(null); 
   const [board,setBoard] = useState(tablero);
 
+  // Este estado es para poder cambiar los turnos
   const [turn, setTurn] = useState(TURNS.X);
 
+  // Este estado es para poder ver al ganador
+  const [winner, setWinner] = useState(null);
+// -----------------------------------------------------------------
+
+  // Funcion para ver el ganador
+
+  
+  // Reiniciar Juego
+  const resetGame = () =>{
+    setBoard(tablero);
+    setWinner(null);
+    setTurn(TURNS.X)
+  }
+
+  // Funcion para actualizar el board
+
   const updateBoard = (index) =>{
-    
-    if (board[index]) return;
-    
+    // Si hay una x/o en el index no hacer nada
+    if (board[index] || winner) return;
+
+    // Copiamos el tablero y lo actualizamos con el turno en el index
     const newBoard = [...board];
     newBoard[index] = turn;
-    setBoard(newBoard)
+    setBoard(newBoard);
 
 
+    // Aca vamos cambiando los turnos
+    //turn el el turno actual
+    //si el turno actual es X, entonces le toca la O
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
+    // y aca cambiamos el estado del turno
     setTurn(newTurn);
+
+    // revisamos si hay un aganador
+
+    const newWinner = checkWinnerFrom(newBoard);
+    if (newWinner) {
+      setWinner(newWinner);
+    }
+    else if(checkEndGame(newBoard)){
+      setWinner(false);
+    }
   }
   return (
     <main className='board'>
       <h1>Ta Te Ti</h1>
+      <button onClick={resetGame}>Reiniciar juego</button>
       <section className='game'>
         {
-          board.map((_,index) =>{
+          board.map((square,index) =>{
             return(
               <Square 
               key ={index} 
               index ={index}
               updateBoard ={updateBoard}>
               
-              {board[index]}
+              {square}
               </Square>
             )
           })
@@ -64,6 +88,8 @@ function App() {
           {TURNS.O}
         </Square>
       </section>
+
+      <WinnerModal resetGame={resetGame} winner={winner}/>
     </main>
   )
 }
