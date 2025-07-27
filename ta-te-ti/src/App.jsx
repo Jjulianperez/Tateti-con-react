@@ -12,10 +12,19 @@ function App() {
   // Estados "useState"
   // Este estado es el tablero y para actualizarlo
   const tablero = Array(9).fill(null); 
-  const [board,setBoard] = useState(tablero);
+  const [board,setBoard] = useState(()=>{
+    
+    const boardFromStrorage = window.localStorage.getItem('board');
+    if (boardFromStrorage)
+    return JSON.parse(boardFromStrorage);
+    return tablero;
+  });
 
   // Este estado es para poder cambiar los turnos
-  const [turn, setTurn] = useState(TURNS.X);
+  const [turn, setTurn] = useState(()=>{
+    const turnFromStorage = window.localStorage.getItem('turn');
+    return turnFromStorage ?? TURNS.X
+  });
 
   // Este estado es para poder ver al ganador
   const [winner, setWinner] = useState(null);
@@ -29,6 +38,9 @@ function App() {
     setBoard(tablero);
     setWinner(null);
     setTurn(TURNS.X)
+
+    window.localStorage.removeItem('board');
+    window.localStorage.removeItem('turn');
   }
 
   // Funcion para actualizar el board
@@ -41,17 +53,21 @@ function App() {
     const newBoard = [...board];
     newBoard[index] = turn;
     setBoard(newBoard);
-
-
     // Aca vamos cambiando los turnos
-    //turn el el turno actual
+    //turn el turno actual
     //si el turno actual es X, entonces le toca la O
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
+    
     // y aca cambiamos el estado del turno
     setTurn(newTurn);
 
-    // revisamos si hay un aganador
+    // Guardar partida
 
+    window.localStorage.setItem('board',JSON.stringify(newBoard));
+    window.localStorage.setItem('turn', turn);
+
+
+    // revisamos si hay un ganador
     const newWinner = checkWinnerFrom(newBoard);
     if (newWinner) {
       setWinner(newWinner);
