@@ -18,14 +18,17 @@ const Square =({children, isSelected, updateBoard, index}) =>{
       {children}
     </div>
   )
-}
+} 
 function App() {
-  const tablero = Array(9).fill(null);
+  const tablero = Array(9).fill(null); 
   const [board,setBoard] = useState(tablero);
 
   const [turn, setTurn] = useState(TURNS.X);
 
   const updateBoard = (index) =>{
+    
+    if (board[index]) return;
+    
     const newBoard = [...board];
     newBoard[index] = turn;
     setBoard(newBoard)
@@ -42,9 +45,9 @@ function App() {
           board.map((_,index) =>{
             return(
               <Square 
-              key={index} 
-              index={index}
-              updateBoard={updateBoard}>
+              key ={index} 
+              index ={index}
+              updateBoard ={updateBoard}>
               
               {board[index]}
               </Square>
