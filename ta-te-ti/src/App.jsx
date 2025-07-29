@@ -6,6 +6,7 @@ import { TURNS } from './constatns';
 import { checkWinnerFrom, checkEndGame } from './logic/board';
 import { WinnerModal } from './components/WinnerModal';
 import { saveGameToStore, resetGameStorage } from './localStorage';
+import confetti from 'canvas-confetti'
 
 
 
@@ -67,6 +68,7 @@ function App() {
     // revisamos si hay un ganador
     const newWinner = checkWinnerFrom(newBoard);
     if (newWinner) {
+      confetti()
       setWinner(newWinner);
     }
     else if(checkEndGame(newBoard)){

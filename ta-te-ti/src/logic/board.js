@@ -1,5 +1,4 @@
 import { WINNER_COMBOS } from "../constatns";
-
 export const checkWinnerFrom = (boardToCheck) =>{
     for (const combo of WINNER_COMBOS){
       const [a,b,c] = combo;
@@ -12,6 +11,7 @@ export const checkWinnerFrom = (boardToCheck) =>{
       }
     }
     return null
+    
   }
 
 // Funcion para ver si hay empate
